@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Proyecto Redes 2</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css"
+        integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen">
+    <script type="text/javascript" src='main.js'></script>
+    <link rel='stylesheet' type='text/css' media='screen' href='style.css'>
+
+<body>
+    <div class="container-fluid">
+        <div class="page-header">
+            <h1>Construcción y Fragmentación de datagramas IPv4 <small>Proyecto Redes II</small></h1>
+        </div>
+        <form id="formulario">
+            <div class="form-group">
+                <div class="col-md-4">
+                    <label for="mtu">Unidad Máxima de transferencia de red</label>
+                    <input type="number" class="form-control" id="mtu" value="">
+                </div>
+                <div class="col-md-4">
+                    <label for="longitudTotal">Longitud Total del datagrama</label>
+                    <input type="number" class="form-control" id="longitudTotal" value="">
+                </div>
+                <div class="col-md-4">
+                    <label for="protocolo">Protocolo</label>
+                    <select class="form-control" id="protocolo">
+                        <option>Seleccione...</option>
+                        <option>ICMP</option>
+                        <option>TCP</option>
+                        <option>UDP</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="ipOrigen">Dirección Ip de origen</label>
+                    <input type="text" class="form-control" id="ipOrigen" value="">
+                </div>
+                <div class="col-md-4">
+                    <label for="ipDestino">Dirección Ip de destino</label>
+                    <input type="text" class="form-control" id="ipDestino" value="">
+                </div>
+            </div>
+        </form>
+        <br>
+        <div class="col-md-12">
+            <button class="btn btn-primary" id="btnCrear">Crear Datagrama</button>
+            <button class="btn btn-primary" id="btnLimpiar">Limpiar</button>
+        </div>
+        <br>
+        <div class="col-md-12 text-center">
+            <table class="table table-bordered" id="tablaDatagrama">
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
