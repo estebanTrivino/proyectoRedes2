@@ -1,7 +1,7 @@
 (function (yourCode) {
     yourCode(window.jQuery, window, document)
 }(function ($, window) {
-    let btnCrear, mtu, longitudTotal, protocolo, ipOrigen, ipDestino, tablaDatagrama, btnLimpiar;
+    let btnCrear, mtu, longitudTotal, protocolo, ipOrigen, ipDestino, tablas, btnLimpiar;
     const version = 4,
         longitudEncabezado = 5,
         serviciosDif = 0;
@@ -19,7 +19,7 @@
         protocolo = $("#protocolo")
         ipOrigen = $("#ipOrigen")
         ipDestino = $("#ipDestino")
-        tablaDatagrama = $("#tablaDatagrama>tbody")
+        tablas = $("#tablas")
     }
 
     function listeners() {
@@ -38,9 +38,8 @@
 
         limpiarTabla()
 
-        let mf, df, cantidadPaquetes, numIdentificacion, tlf, datagramaBin, datagramaHex, idProtocolo, ipOrigenDec, ipDestinoDec, aux
+        let mf, df, cantidadPaquetes, numIdentificacion, tlf, idProtocolo, ipOrigenDec, ipDestinoDec, infoDatagrama
         let desplazamiento = 0
-        let checkSum = 0
 
         numIdentificacion = Math.floor((Math.random() * (65535)))
         tlf = Math.floor((Math.random() * (255)))
@@ -78,70 +77,221 @@
                 desplazamiento += Number(mtu.val())
             }
 
-            checkSum = 0
+            infoDatagrama = {
+                "version": {
+                    "bits": 4,
+                    "dec": version,
+                    "bin": "",
+                    "hexa": ""
+                },
+                "longitudEncabezado": {
+                    "bits": 4,
+                    "dec": longitudEncabezado,
+                    "bin": "",
+                    "hexa": ""
 
-            datagramaHex = decToHex(version) + decToHex(longitudEncabezado) + decToHex(serviciosDif) +
-                decToHex(Number(longitudTotal.val())) + decToHex(numIdentificacion) + 0 + df + mf +
-                decToHex(desplazamiento) + decToHex(tlf) + decToHex(idProtocolo) + decToHex(checkSum) + decToHex(Number(ipOrigenDec)) +
-                decToHex(Number(ipDestinoDec))
+                },
+                "serviciosDif": {
+                    "bits": 8,
+                    "dec": serviciosDif,
+                    "bin": "",
+                    "hexa": ""
 
-            for (let i = 0; i < datagramaHex.length; i+=2) {
-                aux = aux + datagramaHex.substring(i, i + 2) + " "
+                },
+                "longitudTotal": {
+                    "bits": 16,
+                    "dec": Number(longitudTotal.val()),
+                    "bin": "",
+                    "hexa": ""
+
+                },
+                "numeroIdentificacion": {
+                    "bits": 16,
+                    "dec": numIdentificacion,
+                    "bin": "",
+                    "hexa": ""
+
+                },
+                "flagReservada": {
+                    "bits": 1,
+                    "dec": 0,
+                    "bin": "",
+                    "hexa": ""
+
+                },
+                "flagDf": {
+                    "bits": 1,
+                    "dec": df,
+                    "bin": "",
+                    "hexa": ""
+
+                },
+                "flagMf": {
+                    "bits": 1,
+                    "dec": mf,
+                    "bin": "",
+                    "hexa": ""
+
+                },
+                "desplazamiento": {
+                    "bits": 13,
+                    "dec": desplazamiento,
+                    "bin": "",
+                    "hexa": ""
+
+                },
+                "tlf": {
+                    "bits": 8,
+                    "dec": tlf,
+                    "bin": "",
+                    "hexa": ""
+
+                },
+                "protocolo": {
+                    "bits": 8,
+                    "dec": idProtocolo,
+                    "bin": "",
+                    "hexa": ""
+
+                },
+                "checkSum": {
+                    "bits": 16,
+                    "dec": 0,
+                    "bin": "",
+                    "hexa": ""
+
+                },
+                "ipOrigen": {
+                    "bits": 32,
+                    "dec": Number(ipOrigenDec),
+                    "bin": "",
+                    "hexa": ""
+
+                },
+                "ipDestino": {
+                    "bits": 32,
+                    "dec": Number(ipDestinoDec),
+                    "bin": "",
+                    "hexa": ""
+
+                }
             }
 
-            datagramaHex = aux;
+            datagramas = organizarDatagramas(infoDatagrama)
 
-            datagramaBin = decToBin(version) + decToBin(longitudEncabezado) + decToBin(serviciosDif) +
-                decToBin(Number(longitudTotal.val())) + decToBin(numIdentificacion) + 0 + df + mf +
-                decToBin(desplazamiento) + decToBin(tlf) + decToBin(idProtocolo) + decToBin(checkSum) + decToBin(Number(ipOrigenDec)) +
-                decToBin(Number(ipDestinoDec))
-
-            datagramaBin = datagramaBin.substring(0, 32) + "<br>" + datagramaBin.substring(32, 64) + "<br>" +
-                datagramaBin.substring(64, 96) + "<br>" + datagramaBin.substring(96, )
-
-            tablaDatagrama.append(`<tr>` +
-                `<td colspan="8""><strong>Datagrama Binario: ${i+1}</strong></td>` +
+            tablas.append(
+                `<table class="table table-bordered colorBorde">` +
+                `<tbody>` +
+                `<tr>` +
+                `<td colspan="8""><strong>Datagrama Decimal: ${i+1}</strong></td>` +
                 `</tr>` +
                 `<tr>` +
-                `<td>Versión: ${version}</td>` +
-                `<td>Longitud Encabezado: ${longitudEncabezado}</td>` +
-                `<td colspan="2">Servicios Diferenciados: ${serviciosDif}</td>` +
-                `<td colspan="4">Longitud Total: ${longitudTotal.val()}</td>` +
+                `<td>Versión: ${infoDatagrama.version.dec}</td>` +
+                `<td>Longitud Encabezado: ${infoDatagrama.longitudEncabezado.dec}</td>` +
+                `<td colspan="2">Servicios Diferenciados: ${infoDatagrama.serviciosDif.dec}</td>` +
+                `<td colspan="4">Longitud Total: ${infoDatagrama.longitudTotal.dec}</td>` +
                 `</tr>` +
                 `<tr>` +
-                `<td colspan="4">Identificación: ${numIdentificacion}</td>` +
-                `<td>0</td>` +
-                `<td>DF: ${df}</td>` +
-                `<td>MF: ${mf}</td>` +
-                `<td>Desplazamiento: ${desplazamiento}</td>` +
+                `<td colspan="4">Identificación: ${infoDatagrama.numeroIdentificacion.dec}</td>` +
+                `<td>${infoDatagrama.flagReservada.dec}</td>` +
+                `<td>DF: ${infoDatagrama.flagDf.dec}</td>` +
+                `<td>MF: ${infoDatagrama.flagMf.dec}</td>` +
+                `<td>Desplazamiento: ${infoDatagrama.desplazamiento.dec}</td>` +
                 `</tr>` +
                 `<tr>` +
-                `<td colspan="2">Tiempo de vida: ${tlf}</td>` +
-                `<td colspan="2">Protocolo: ${protocolo.val()}</td>` +
-                `<td colspan="4">Suma de comprobación: ${checkSum}</td>` +
+                `<td colspan="2">Tiempo de vida: ${infoDatagrama.tlf.dec}</td>` +
+                `<td colspan="2">Protocolo: ${infoDatagrama.protocolo.dec}</td>` +
+                `<td colspan="4">Suma de comprobación: ${infoDatagrama.checkSum.dec}</td>` +
                 `</tr>` +
                 `<tr>` +
-                `<td colspan="8">Dirección IP Origen: ${ipOrigen.val()}</td>` +
+                `<td colspan="8">Dirección IP Origen: ${infoDatagrama.ipOrigen.dec}</td>` +
                 `</tr>` +
                 `<tr>` +
-                `<td colspan="8">Dirección IP Destino: ${ipDestino.val()}</td>` +
+                `<td colspan="8">Dirección IP Destino: ${infoDatagrama.ipDestino.dec}</td>` +
                 `</tr>` +
                 `<tr>` +
                 `<td><strong>Datagrama en Binario:</strong></td>` +
-                `<td colspan="7">${datagramaBin}</td>` +
+                `<td colspan="7">${datagramas[0]}</td>` +
                 `</tr>` +
                 `<tr>` +
                 `<td><strong>Datagrama en Hexadecimal:</strong></td>` +
-                `<td colspan="7">${datagramaHex}</td>` +
-                `</tr>`);
+                `<td colspan="7">${datagramas[1]}</td>` +
+                `</tr>` +
+                `</tbody>` +
+                `</table>`
+            );
         }
+    }
+
+    function organizarDatagramas(infoDatagrama) {
+
+        let aux = ""
+        let datagramaBin = "", datagramaHex= "", checkSum = 0
+
+        for( element in infoDatagrama){
+            infoDatagrama[element]['bin'] = decToBin(infoDatagrama[element]['bits'], infoDatagrama[element]['dec'])
+            datagramaBin += infoDatagrama[element]['bin']
+            infoDatagrama[element]['hexa']= binToHex(infoDatagrama[element]['bin'],infoDatagrama[element]['bits'])
+            datagramaHex += infoDatagrama[element]['hexa']
+        }
+
+        console.log(datagramaHex);
+        let auxBin = ""
+
+        for( let i=0; i<datagramaBin.length; i+=32){
+            for(let j = i; j<(i+32); j++){
+                auxBin= auxBin+datagramaBin.charAt(j)
+            }
+            auxBin+= "<br>"
+        }
+
+        datagramaBin = auxBin;
+
+        let auxHex = ""
+
+        for( let i=0; i<datagramaHex.length; i+=2){
+            auxHex= auxHex+datagramaHex.charAt(i)
+            auxHex= auxHex+datagramaHex.charAt(i+1)
+            auxHex+= " "
+        }
+
+        datagramaHex = auxHex;
+        return [datagramaBin, datagramaHex]
+    }
+
+    function calcularCheckSum(data) {
+
+        let resultado = 0
+
+        for (let i = 0; i < data.length; i++) {
+            let acarreo = 0
+            if (i === 0) {
+                let suma1 = hexToDec(data[i].charAt(0)) + hexToDec(data[i + 1].charAt(0))
+                let suma2 = hexToDec(data[i].charAt(1)) + hexToDec(data[i + 1].charAt(1))
+                if (suma1 > 15) {
+                    suma1 = suma1 - 16
+                    suma1 = decToHex(suma1)
+                    acarreo++
+                    suma2 = suma2 + acarreo
+                    if (suma2 > 15) {
+                        suma2 = suma2 - 16
+
+                    }
+                } else {
+                    suma1 = decToHex(suma1)
+                }
+
+            }
+        }
+
+        return resultado
     }
 
     /**
      * Permite limpiar la tabla del datagrama
      */
     function limpiarTabla() {
-        tablaDatagrama.html("")
+        tablas.html("")
     }
 
     /**
@@ -158,8 +308,35 @@
      * @param num 
      * @returns 
      */
-    function decToBin(num) {
-        return num.toString(2)
+    function decToBin(bits, dec) {
+        let bin = dec.toString(2)
+        let auxHex = bin
+        for (let i = 0; i < (bits - bin.length); i++) {
+            auxHex = "0" + auxHex
+        }
+        return auxHex
+    }
+
+    /**
+     * Convierte un numero hexadecimal a decimal
+     * @param {*} hexString 
+     * @returns 
+     */
+    function hexToDec(hexString) {
+        return parseInt(hexString, 16);
+    }
+
+    function binToHex(binString, bits) {
+        let hex = Number(parseInt(binString,2)).toString(16);
+        let tamanoBin = hex.length;
+        console.log(tamanoBin, hex, Math.round(bits/4));
+        if(tamanoBin < Math.round(bits/4)){
+            for(let i= 0; i<((bits/4)-tamanoBin);i++){
+                hex = "0"+hex
+            }
+            console.log(hex);
+        }
+        return hex
     }
 
 }))
