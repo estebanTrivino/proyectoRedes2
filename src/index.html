@@ -33,9 +33,9 @@
                     <label for="protocolo">Protocolo</label>
                     <select class="form-control" id="protocolo">
                         <option>Seleccione...</option>
-                        <option>ICMP</option>
-                        <option>TCP</option>
-                        <option>UDP</option>
+                        <option value="0">ICMP</option>
+                        <option value="1">TCP</option>
+                        <option value="2">UDP</option>
                     </select>
                 </div>
                 <div class="col-md-4">
@@ -51,6 +51,7 @@
         <br>
         <div class="col-md-12">
             <button class="btn btn-primary" id="btnCrear">Crear Datagrama</button>
+            <button class="btn btn-primary" id="btnAleatorio">Generar Aleatorio</button>
             <button class="btn btn-primary" id="btnLimpiar">Limpiar</button>
         </div>
         <br>

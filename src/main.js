@@ -1,7 +1,7 @@
 (function (yourCode) {
     yourCode(window.jQuery, window, document)
 }(function ($, window) {
-    let btnCrear, mtu, longitudTotal, protocolo, ipOrigen, ipDestino, tablas, btnLimpiar;
+    let btnCrear, mtu, longitudTotal, protocolo, ipOrigen, ipDestino, tablas, btnLimpiar, btnAleatorio;
     const version = 4,
         longitudEncabezado = 5,
         serviciosDif = 0;
@@ -14,6 +14,7 @@
     function init() {
         btnLimpiar = $("#btnLimpiar")
         btnCrear = $("#btnCrear")
+        btnAleatorio = $("#btnAleatorio")
         mtu = $("#mtu")
         longitudTotal = $("#longitudTotal")
         protocolo = $("#protocolo")
@@ -25,6 +26,7 @@
     function listeners() {
         btnCrear.click(crearDatagrama)
         btnLimpiar.click(limpiarTabla)
+        btnAleatorio.click(crearAleatorio)
     }
 
     function format() {
@@ -48,20 +50,24 @@
         ipOrigenDec = ipOrigen.val().replace(/\./g, '')
         ipDestinoDec = ipDestino.val().replace(/\./g, '')
 
+        console.log(protocolo.val());
+
         switch (protocolo.val()) {
-            case "ICMP":
+            case "0":
                 idProtocolo = 1
                 break;
-            case "TCP":
+            case "1":
                 idProtocolo = 6
                 break;
-            case "UDP":
+            case "2":
                 idProtocolo = 17
                 break;
             default:
                 break;
         }
 
+        console.log(idProtocolo);
+        
         for (let i = 0; i < cantidadPaquetes; i++) {
 
             if (i === 0) {
@@ -158,7 +164,7 @@
                     "bits": 16,
                     "dec": 0,
                     "bin": "",
-                    "hexa": ""
+                    "hexa": "0000"
 
                 },
                 "ipOrigen": {
@@ -204,10 +210,10 @@
                 `<td colspan="4">Suma de comprobación: ${infoDatagrama.checkSum.dec}</td>` +
                 `</tr>` +
                 `<tr>` +
-                `<td colspan="8">Dirección IP Origen: ${infoDatagrama.ipOrigen.dec}</td>` +
+                `<td colspan="8">Dirección IP Origen: ${ipOrigen.val()}</td>` +
                 `</tr>` +
                 `<tr>` +
-                `<td colspan="8">Dirección IP Destino: ${infoDatagrama.ipDestino.dec}</td>` +
+                `<td colspan="8">Dirección IP Destino: ${ipDestino.val()}</td>` +
                 `</tr>` +
                 `<tr>` +
                 `<td><strong>Datagrama en Binario:</strong></td>` +
@@ -297,6 +303,7 @@
             aux.push(data[i] + data[i + 1])
         }
         data = aux
+        console.log(data);
         for (let i = 0; i < data.length - 2; i++) {
             let acarreo = 0
             if (i === 0) {
@@ -366,6 +373,11 @@
         }
 
         let resultado = suma1 + "" + suma2 + "" + suma3 + "" + suma4
+
+        if(acarreo>0){
+            resultado = sumarHexa(resultado,"0001")
+        }
+
         return resultado
     }
 
@@ -374,6 +386,17 @@
      */
     function limpiarTabla() {
         tablas.html("")
+    }
+
+    /**
+     * Permite añadir información aleatoria para el ejercicio
+     */
+    function crearAleatorio() {
+        mtu.val(Math.round(Math.random() * (1500 - 500) + 500));
+        longitudTotal.val(Math.round(Math.random() * (2000 - 500) + 500));
+        $("#protocolo option[value="+ Math.round(Math.random() * (2 - 0) + 0) +"]").attr("selected",true);
+        ipOrigen.val(`${Math.round(Math.random() * (254 - 1) + 0)}.${Math.round(Math.random() * (254 - 1) + 0)}.${Math.round(Math.random() * (254 - 1) + 0)}.${Math.round(Math.random() * (254 - 1) + 0)}`)
+        ipDestino.val(`${Math.round(Math.random() * (254 - 1) + 0)}.${Math.round(Math.random() * (254 - 1) + 0)}.${Math.round(Math.random() * (254 - 1) + 0)}.${Math.round(Math.random() * (254 - 1) + 0)}`)
     }
 
     /**
