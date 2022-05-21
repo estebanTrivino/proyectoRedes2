@@ -223,67 +223,149 @@
         }
     }
 
+    /**
+     * Retorna los datagramas organizados en el formato requerido
+     * @param {*} infoDatagrama 
+     * @returns 
+     */
     function organizarDatagramas(infoDatagrama) {
 
-        let aux = ""
-        let datagramaBin = "", datagramaHex= "", checkSum = 0
-
-        for( element in infoDatagrama){
-            infoDatagrama[element]['bin'] = decToBin(infoDatagrama[element]['bits'], infoDatagrama[element]['dec'])
-            datagramaBin += infoDatagrama[element]['bin']
-            infoDatagrama[element]['hexa']= binToHex(infoDatagrama[element]['bin'],infoDatagrama[element]['bits'])
-            datagramaHex += infoDatagrama[element]['hexa']
-        }
-
-        console.log(datagramaHex);
-        let auxBin = ""
-
-        for( let i=0; i<datagramaBin.length; i+=32){
-            for(let j = i; j<(i+32); j++){
-                auxBin= auxBin+datagramaBin.charAt(j)
-            }
-            auxBin+= "<br>"
-        }
-
-        datagramaBin = auxBin;
-
-        let auxHex = ""
-
-        for( let i=0; i<datagramaHex.length; i+=2){
-            auxHex= auxHex+datagramaHex.charAt(i)
-            auxHex= auxHex+datagramaHex.charAt(i+1)
-            auxHex+= " "
-        }
-
-        datagramaHex = auxHex;
+        let datagramaBin = "",
+            datagramaHex = "",
+            checkSum = 0
+        datagramaBin = obtenerDatagrama("bin", infoDatagrama);
+        datagramaHex = obtenerDatagrama("hex", infoDatagrama);
+        checkSum = calcularCheckSum(datagramaHex)
+        infoDatagrama.checkSum.hexa = checkSum
+        infoDatagrama.checkSum.dec = hexToDec(checkSum)
+        infoDatagrama.checkSum.bin = hexToBin(checkSum)
+        datagramaBin = obtenerDatagrama("bin", infoDatagrama);
+        datagramaHex = obtenerDatagrama("hex", infoDatagrama);
         return [datagramaBin, datagramaHex]
     }
 
+    /**
+     * Organiza los datagramas binario y hexadecimal en el formato requerido
+     * @param {*} tipo 
+     * @param {*} infoDatagrama 
+     * @returns 
+     */
+    function obtenerDatagrama(tipo, infoDatagrama) {
+
+        let datagrama = ""
+
+        if (tipo === "bin") {
+            let auxBin = ""
+            for (element in infoDatagrama) {
+                infoDatagrama[element]["bin"] = decToBin(infoDatagrama[element]['bits'], infoDatagrama[element]['dec'])
+                datagrama += infoDatagrama[element]['bin']
+            }
+            for (let i = 0; i < datagrama.length; i += 32) {
+                for (let j = i; j < (i + 32); j++) {
+                    auxBin = auxBin + datagrama.charAt(j)
+                }
+                auxBin += "<br>"
+            }
+            datagrama = auxBin;
+        } else {
+            let auxHex = ""
+            for (element in infoDatagrama) {
+                infoDatagrama[element]['hexa'] = binToHex(infoDatagrama[element]['bin'], infoDatagrama[element]['bits'])
+                datagrama += infoDatagrama[element]['hexa']
+            }
+            for (let i = 0; i < datagrama.length; i += 2) {
+                auxHex = auxHex + datagrama.charAt(i)
+                auxHex = auxHex + datagrama.charAt(i + 1)
+                auxHex += " "
+            }
+            datagrama = auxHex;
+        }
+        return datagrama
+    }
+
+    /**
+     * Realiza la operación necesaria para calcular el cheksum
+     * @param {*} data 
+     * @returns 
+     */
     function calcularCheckSum(data) {
 
-        let resultado = 0
-
-        for (let i = 0; i < data.length; i++) {
+        let resultado = ""
+        let aux = []
+        data = data.split(" ")
+        for (let i = 0; i < data.length; i = i + 2) {
+            aux.push(data[i] + data[i + 1])
+        }
+        data = aux
+        for (let i = 0; i < data.length - 2; i++) {
             let acarreo = 0
             if (i === 0) {
-                let suma1 = hexToDec(data[i].charAt(0)) + hexToDec(data[i + 1].charAt(0))
-                let suma2 = hexToDec(data[i].charAt(1)) + hexToDec(data[i + 1].charAt(1))
-                if (suma1 > 15) {
-                    suma1 = suma1 - 16
-                    suma1 = decToHex(suma1)
-                    acarreo++
-                    suma2 = suma2 + acarreo
-                    if (suma2 > 15) {
-                        suma2 = suma2 - 16
-
-                    }
-                } else {
-                    suma1 = decToHex(suma1)
-                }
-
+                resultado = sumarHexa(data[i], data[i + 1])
+                i++
+            } else {
+                resultado = sumarHexa(resultado, data[i])
             }
         }
+        resultado = hexToDec('FFFF') - hexToDec(resultado)
+        resultado = decToHex(resultado)
+        return resultado
+    }
 
+    /**
+     * Realiza la suma de hexadecimales con acarreo
+     * @param {*} hex1 
+     * @param {*} hex2 
+     * @returns 
+     */
+    function sumarHexa(hex1, hex2) {
+
+        let acarreo = 0
+
+        let suma1 = hexToDec(hex1.charAt(0)) + hexToDec(hex2.charAt(0))
+        let suma2 = hexToDec(hex1.charAt(1)) + hexToDec(hex2.charAt(1))
+        let suma3 = hexToDec(hex1.charAt(2)) + hexToDec(hex2.charAt(2))
+        let suma4 = hexToDec(hex1.charAt(3)) + hexToDec(hex2.charAt(3))
+
+        if (suma1 > 15) {
+            suma1 = suma1 - 16
+            suma1 = decToHex(suma1)
+            acarreo++
+            suma2 = suma2 + acarreo
+        } else {
+            suma1 = decToHex(suma1)
+        }
+
+        if (suma2 > 15) {
+            acarreo--
+            suma2 = suma2 - 16
+            suma2 = decToHex(suma2)
+            acarreo++
+            suma3 = suma3 + acarreo
+        } else {
+            suma2 = decToHex(suma2)
+        }
+
+        if (suma3 > 15) {
+            acarreo--
+            suma3 = suma3 - 16
+            suma3 = decToHex(suma3)
+            acarreo++
+            suma4 = suma4 + acarreo
+        } else {
+            suma3 = decToHex(suma3)
+        }
+
+        if (suma4 > 15) {
+            acarreo--
+            suma4 = suma4 - 16
+            suma4 = decToHex(suma3)
+            acarreo++
+            suma4 = suma4 + acarreo
+        } else {
+            suma4 = decToHex(suma4)
+        }
+
+        let resultado = suma1 + "" + suma2 + "" + suma3 + "" + suma4
         return resultado
     }
 
@@ -327,16 +409,17 @@
     }
 
     function binToHex(binString, bits) {
-        let hex = Number(parseInt(binString,2)).toString(16);
+        let hex = Number(parseInt(binString, 2)).toString(16);
         let tamanoBin = hex.length;
-        console.log(tamanoBin, hex, Math.round(bits/4));
-        if(tamanoBin < Math.round(bits/4)){
-            for(let i= 0; i<((bits/4)-tamanoBin);i++){
-                hex = "0"+hex
+        if (tamanoBin < Math.round(bits / 4)) {
+            for (let i = 0; i < ((bits / 4) - tamanoBin); i++) {
+                hex = "0" + hex
             }
-            console.log(hex);
         }
         return hex
     }
 
+    function hexToBin(hex) {
+        return Number(parseInt(hex, 16)).toString(2);
+    }
 }))
