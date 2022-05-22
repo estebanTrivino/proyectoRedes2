@@ -50,8 +50,6 @@
         ipOrigenDec = ipOrigen.val().replace(/\./g, '')
         ipDestinoDec = ipDestino.val().replace(/\./g, '')
 
-        console.log(protocolo.val());
-
         switch (protocolo.val()) {
             case "0":
                 idProtocolo = 1
@@ -66,8 +64,6 @@
                 break;
         }
 
-        console.log(idProtocolo);
-        
         for (let i = 0; i < cantidadPaquetes; i++) {
 
             if (i === 0) {
@@ -88,12 +84,14 @@
                     "bits": 4,
                     "dec": version,
                     "bin": "",
+                    "tamanoBin":"",
                     "hexa": ""
                 },
                 "longitudEncabezado": {
                     "bits": 4,
                     "dec": longitudEncabezado,
                     "bin": "",
+                    "tamanoBin":"",
                     "hexa": ""
 
                 },
@@ -101,6 +99,7 @@
                     "bits": 8,
                     "dec": serviciosDif,
                     "bin": "",
+                    "tamanoBin":"",
                     "hexa": ""
 
                 },
@@ -108,6 +107,7 @@
                     "bits": 16,
                     "dec": Number(longitudTotal.val()),
                     "bin": "",
+                    "tamanoBin":"",
                     "hexa": ""
 
                 },
@@ -115,6 +115,7 @@
                     "bits": 16,
                     "dec": numIdentificacion,
                     "bin": "",
+                    "tamanoBin":"",
                     "hexa": ""
 
                 },
@@ -122,6 +123,7 @@
                     "bits": 1,
                     "dec": 0,
                     "bin": "",
+                    "tamanoBin":"",
                     "hexa": ""
 
                 },
@@ -129,6 +131,7 @@
                     "bits": 1,
                     "dec": df,
                     "bin": "",
+                    "tamanoBin":"",
                     "hexa": ""
 
                 },
@@ -136,6 +139,7 @@
                     "bits": 1,
                     "dec": mf,
                     "bin": "",
+                    "tamanoBin":"",
                     "hexa": ""
 
                 },
@@ -143,6 +147,7 @@
                     "bits": 13,
                     "dec": desplazamiento,
                     "bin": "",
+                    "tamanoBin":"",
                     "hexa": ""
 
                 },
@@ -150,6 +155,7 @@
                     "bits": 8,
                     "dec": tlf,
                     "bin": "",
+                    "tamanoBin":"",
                     "hexa": ""
 
                 },
@@ -157,6 +163,7 @@
                     "bits": 8,
                     "dec": idProtocolo,
                     "bin": "",
+                    "tamanoBin":"",
                     "hexa": ""
 
                 },
@@ -164,6 +171,7 @@
                     "bits": 16,
                     "dec": 0,
                     "bin": "",
+                    "tamanoBin":"",
                     "hexa": "0000"
 
                 },
@@ -171,6 +179,7 @@
                     "bits": 32,
                     "dec": Number(ipOrigenDec),
                     "bin": "",
+                    "tamanoBin":"",
                     "hexa": ""
 
                 },
@@ -178,12 +187,15 @@
                     "bits": 32,
                     "dec": Number(ipDestinoDec),
                     "bin": "",
+                    "tamanoBin":"",
                     "hexa": ""
 
                 }
             }
 
             datagramas = organizarDatagramas(infoDatagrama)
+
+            console.log(infoDatagrama);
 
             tablas.append(
                 `<table class="table table-bordered colorBorde">` +
@@ -264,6 +276,7 @@
             let auxBin = ""
             for (element in infoDatagrama) {
                 infoDatagrama[element]["bin"] = decToBin(infoDatagrama[element]['bits'], infoDatagrama[element]['dec'])
+                infoDatagrama[element]["tamanoBin"] = infoDatagrama[element]["bin"].length
                 datagrama += infoDatagrama[element]['bin']
             }
             for (let i = 0; i < datagrama.length; i += 32) {
@@ -275,9 +288,16 @@
             datagrama = auxBin;
         } else {
             let auxHex = ""
+            let infoFlags = infoDatagrama["flagReservada"]['bin'] + "" + infoDatagrama["flagDf"]['bin'] + "" + infoDatagrama["flagMf"]['bin'] + "" + infoDatagrama["desplazamiento"]['bin']
             for (element in infoDatagrama) {
-                infoDatagrama[element]['hexa'] = binToHex(infoDatagrama[element]['bin'], infoDatagrama[element]['bits'])
-                datagrama += infoDatagrama[element]['hexa']
+                if (element === "flagReservada" || element === "flagDf" || element === "flagMf" || element === "desplazamiento") {
+                    if (element === "flagReservada") {
+                        datagrama += binToHex(infoFlags)
+                    }
+                } else {
+                    infoDatagrama[element]['hexa'] = binToHex(infoDatagrama[element]['bin'], infoDatagrama[element]['bits'])
+                    datagrama += infoDatagrama[element]['hexa']
+                }
             }
             for (let i = 0; i < datagrama.length; i += 2) {
                 auxHex = auxHex + datagrama.charAt(i)
@@ -303,7 +323,6 @@
             aux.push(data[i] + data[i + 1])
         }
         data = aux
-        console.log(data);
         for (let i = 0; i < data.length - 2; i++) {
             let acarreo = 0
             if (i === 0) {
@@ -313,7 +332,7 @@
                 resultado = sumarHexa(resultado, data[i])
             }
         }
-        resultado = hexToDec('FFFF') - hexToDec(resultado)
+        resultado = restarHexa('FFFF',resultado)
         resultado = decToHex(resultado)
         return resultado
     }
@@ -374,10 +393,47 @@
 
         let resultado = suma1 + "" + suma2 + "" + suma3 + "" + suma4
 
-        if(acarreo>0){
-            resultado = sumarHexa(resultado,"0001")
+        if (acarreo > 0) {
+            resultado = sumarHexa(resultado, "0001")
         }
 
+        return resultado
+    }
+
+    function restarHexa(hex1, hex2){
+        let resultado = 0
+        let acarreo = 0
+        let resta1, resta2, resta3, resta4
+
+        if(hexToDec(hex1.charAt(0)) < hexToDec(hex2.charAt(0)))
+        {
+            resta1 = (hexToDec(hex1.charAt(0))+16)-hexToDec(hex2.charAt(0))
+            acarreo = 1
+        } else {
+            resta1 = hexToDec(hex1.charAt(0))-hexToDec(hex2.charAt(0))
+        }
+
+        if((hexToDec(hex1.charAt(1))-acarreo) < hexToDec(hex2.charAt(1))){
+            resta2 = (hexToDec(hex1.charAt(1))+16)-hexToDec(hex2.charAt(1))
+        } else {
+            resta2 = hexToDec(hex1.charAt(1))-hexToDec(hex2.charAt(1))
+            acarreo = 0
+        }
+
+        if((hexToDec(hex1.charAt(2))-acarreo) < hexToDec(hex2.charAt(2))){
+            resta3 = (hexToDec(hex1.charAt(2))+16)-hexToDec(hex2.charAt(2))
+        } else {
+            resta3 = hexToDec(hex1.charAt(2))-hexToDec(hex2.charAt(2))
+            acarreo = 0
+        }
+
+        if((hexToDec(hex1.charAt(3))-acarreo) < hexToDec(hex2.charAt(3))){
+            resta4 = (hexToDec(hex1.charAt(3))+16)-hexToDec(hex2.charAt(3))
+        } else {
+            resta4 = hexToDec(hex1.charAt(3))-hexToDec(hex2.charAt(3))
+            acarreo = 0
+        }
+        resultado = decToHex(resta1)+""+decToHex(resta2)+""+decToHex(resta3)+""+decToHex(resta4)
         return resultado
     }
 
@@ -389,12 +445,12 @@
     }
 
     /**
-     * Permite añadir información aleatoria para el ejercicio
+     * Permite anadir información aleatoria para el ejercicio
      */
     function crearAleatorio() {
         mtu.val(Math.round(Math.random() * (1500 - 500) + 500));
         longitudTotal.val(Math.round(Math.random() * (2000 - 500) + 500));
-        $("#protocolo option[value="+ Math.round(Math.random() * (2 - 0) + 0) +"]").attr("selected",true);
+        $("#protocolo option[value=" + Math.round(Math.random() * (2 - 0) + 0) + "]").attr("selected", true);
         ipOrigen.val(`${Math.round(Math.random() * (254 - 1) + 0)}.${Math.round(Math.random() * (254 - 1) + 0)}.${Math.round(Math.random() * (254 - 1) + 0)}.${Math.round(Math.random() * (254 - 1) + 0)}`)
         ipDestino.val(`${Math.round(Math.random() * (254 - 1) + 0)}.${Math.round(Math.random() * (254 - 1) + 0)}.${Math.round(Math.random() * (254 - 1) + 0)}.${Math.round(Math.random() * (254 - 1) + 0)}`)
     }
@@ -415,11 +471,11 @@
      */
     function decToBin(bits, dec) {
         let bin = dec.toString(2)
-        let auxHex = bin
+        let auxBin = bin
         for (let i = 0; i < (bits - bin.length); i++) {
-            auxHex = "0" + auxHex
+            auxBin = "0" + auxBin
         }
-        return auxHex
+        return auxBin
     }
 
     /**
