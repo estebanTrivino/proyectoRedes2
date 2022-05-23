@@ -22,35 +22,35 @@
         <form id="formulario">
             <div class="form-group">
                 <div class="row">
-                <div class="col-md-4">
-                    <label for="mtu">Unidad Máxima de transferencia de red</label>
-                    <input type="number" class="form-control" id="mtu" value="">
+                    <div class="col-md-4">
+                        <label for="mtu">Unidad Máxima de transferencia de red</label>
+                        <input type="number" class="form-control" id="mtu" value="">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="longitudTotal">Longitud Total del datagrama</label>
+                        <input type="number" class="form-control" id="longitudTotal" value="">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="protocolo">Protocolo</label>
+                        <select class="form-control" id="protocolo">
+                            <option>Seleccione...</option>
+                            <option value="0">ICMP</option>
+                            <option value="1">TCP</option>
+                            <option value="2">UDP</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <label for="longitudTotal">Longitud Total del datagrama</label>
-                    <input type="number" class="form-control" id="longitudTotal" value="">
-                </div>
-                <div class="col-md-4">
-                    <label for="protocolo">Protocolo</label>
-                    <select class="form-control" id="protocolo">
-                        <option>Seleccione...</option>
-                        <option value="0">ICMP</option>
-                        <option value="1">TCP</option>
-                        <option value="2">UDP</option>
-                    </select>
-                </div>
-            </div>
-            <div class="row">
+                <div class="row">
 
-                <div class="col-md-4">
-                    <label for="ipOrigen">Dirección Ip de origen</label>
-                    <input type="text" class="form-control" id="ipOrigen" value="">
+                    <div class="col-md-4">
+                        <label for="ipOrigen">Dirección Ip de origen</label>
+                        <input type="text" class="form-control" id="ipOrigen" value="">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="ipDestino">Dirección Ip de destino</label>
+                        <input type="text" class="form-control" id="ipDestino" value="">
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <label for="ipDestino">Dirección Ip de destino</label>
-                    <input type="text" class="form-control" id="ipDestino" value="">
-                </div>
-            </div>
 
             </div>
         </form>
@@ -65,4 +65,5 @@
         </div>
     </div>
 </body>
+
 </html>
