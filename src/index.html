@@ -21,6 +21,7 @@
         </div>
         <form id="formulario">
             <div class="form-group">
+                <div class="row">
                 <div class="col-md-4">
                     <label for="mtu">Unidad Máxima de transferencia de red</label>
                     <input type="number" class="form-control" id="mtu" value="">
@@ -38,6 +39,9 @@
                         <option value="2">UDP</option>
                     </select>
                 </div>
+            </div>
+            <div class="row">
+
                 <div class="col-md-4">
                     <label for="ipOrigen">Dirección Ip de origen</label>
                     <input type="text" class="form-control" id="ipOrigen" value="">
@@ -47,9 +51,11 @@
                     <input type="text" class="form-control" id="ipDestino" value="">
                 </div>
             </div>
+
+            </div>
         </form>
         <br>
-        <div class="col-md-12">
+        <div class="row">
             <button class="btn btn-primary" id="btnCrear">Crear Datagrama</button>
             <button class="btn btn-primary" id="btnAleatorio">Generar Aleatorio</button>
             <button class="btn btn-primary" id="btnLimpiar">Limpiar</button>
