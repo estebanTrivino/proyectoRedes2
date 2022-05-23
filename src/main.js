@@ -45,7 +45,7 @@
 
         numIdentificacion = Math.floor((Math.random() * (65535)))
         tlf = Math.floor((Math.random() * (255)))
-        cantidadPaquetes = Math.ceil(longitudTotal.val() / mtu.val())
+        cantidadPaquetes = Math.ceil(longitudTotal.val() / (mtu.val()-20))
 
         ipOrigenDec = ipOrigen.val().replace(/\./g, '')
         ipDestinoDec = ipDestino.val().replace(/\./g, '')
@@ -72,11 +72,11 @@
             } else if (i < cantidadPaquetes - 1) {
                 df = 0
                 mf = 1
-                desplazamiento += Number(mtu.val())
+                desplazamiento += (Number(mtu.val())-20)
             } else {
                 df = 1
                 mf = 0
-                desplazamiento += Number(mtu.val())
+                desplazamiento += (Number(mtu.val())-20)
             }
 
             infoDatagrama = {
