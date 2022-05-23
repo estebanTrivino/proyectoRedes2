@@ -45,7 +45,7 @@
 
         numIdentificacion = Math.floor((Math.random() * (65535)))
         tlf = Math.floor((Math.random() * (255)))
-        cantidadPaquetes = Math.ceil(longitudTotal.val() / (mtu.val()-20))
+        cantidadPaquetes = Math.ceil(longitudTotal.val() / (mtu.val() - 20))
 
         ipOrigenDec = ipOrigen.val().replace(/\./g, '')
         ipDestinoDec = ipDestino.val().replace(/\./g, '')
@@ -72,11 +72,11 @@
             } else if (i < cantidadPaquetes - 1) {
                 df = 0
                 mf = 1
-                desplazamiento += (Number(mtu.val())-20)
+                desplazamiento += (Number(mtu.val()) - 20)
             } else {
                 df = 1
                 mf = 0
-                desplazamiento += (Number(mtu.val())-20)
+                desplazamiento += (Number(mtu.val()) - 20)
             }
 
             infoDatagrama = {
@@ -84,14 +84,14 @@
                     "bits": 4,
                     "dec": version,
                     "bin": "",
-                    "tamanoBin":"",
+                    "tamanoBin": "",
                     "hexa": ""
                 },
                 "longitudEncabezado": {
                     "bits": 4,
                     "dec": longitudEncabezado,
                     "bin": "",
-                    "tamanoBin":"",
+                    "tamanoBin": "",
                     "hexa": ""
 
                 },
@@ -99,7 +99,7 @@
                     "bits": 8,
                     "dec": serviciosDif,
                     "bin": "",
-                    "tamanoBin":"",
+                    "tamanoBin": "",
                     "hexa": ""
 
                 },
@@ -107,7 +107,7 @@
                     "bits": 16,
                     "dec": Number(longitudTotal.val()),
                     "bin": "",
-                    "tamanoBin":"",
+                    "tamanoBin": "",
                     "hexa": ""
 
                 },
@@ -115,7 +115,7 @@
                     "bits": 16,
                     "dec": numIdentificacion,
                     "bin": "",
-                    "tamanoBin":"",
+                    "tamanoBin": "",
                     "hexa": ""
 
                 },
@@ -123,7 +123,7 @@
                     "bits": 1,
                     "dec": 0,
                     "bin": "",
-                    "tamanoBin":"",
+                    "tamanoBin": "",
                     "hexa": ""
 
                 },
@@ -131,7 +131,7 @@
                     "bits": 1,
                     "dec": df,
                     "bin": "",
-                    "tamanoBin":"",
+                    "tamanoBin": "",
                     "hexa": ""
 
                 },
@@ -139,7 +139,7 @@
                     "bits": 1,
                     "dec": mf,
                     "bin": "",
-                    "tamanoBin":"",
+                    "tamanoBin": "",
                     "hexa": ""
 
                 },
@@ -147,7 +147,7 @@
                     "bits": 13,
                     "dec": desplazamiento,
                     "bin": "",
-                    "tamanoBin":"",
+                    "tamanoBin": "",
                     "hexa": ""
 
                 },
@@ -155,7 +155,7 @@
                     "bits": 8,
                     "dec": tlf,
                     "bin": "",
-                    "tamanoBin":"",
+                    "tamanoBin": "",
                     "hexa": ""
 
                 },
@@ -163,7 +163,7 @@
                     "bits": 8,
                     "dec": idProtocolo,
                     "bin": "",
-                    "tamanoBin":"",
+                    "tamanoBin": "",
                     "hexa": ""
 
                 },
@@ -171,7 +171,7 @@
                     "bits": 16,
                     "dec": 0,
                     "bin": "",
-                    "tamanoBin":"",
+                    "tamanoBin": "",
                     "hexa": "0000"
 
                 },
@@ -179,7 +179,7 @@
                     "bits": 32,
                     "dec": Number(ipOrigenDec),
                     "bin": "",
-                    "tamanoBin":"",
+                    "tamanoBin": "",
                     "hexa": ""
 
                 },
@@ -187,7 +187,7 @@
                     "bits": 32,
                     "dec": Number(ipDestinoDec),
                     "bin": "",
-                    "tamanoBin":"",
+                    "tamanoBin": "",
                     "hexa": ""
 
                 }
@@ -275,9 +275,19 @@
         if (tipo === "bin") {
             let auxBin = ""
             for (element in infoDatagrama) {
-                infoDatagrama[element]["bin"] = decToBin(infoDatagrama[element]['bits'], infoDatagrama[element]['dec'])
-                infoDatagrama[element]["tamanoBin"] = infoDatagrama[element]["bin"].length
-                datagrama += infoDatagrama[element]['bin']
+                if (element === "ipOrigen") {
+                    infoDatagrama[element]["bin"] = decToBin(infoDatagrama[element]['bits'], ipOrigen.val(), true)
+                    infoDatagrama[element]["tamanoBin"] = infoDatagrama[element]["bin"].length
+                    datagrama += infoDatagrama[element]['bin']
+                } else if (element === "ipDestino") {
+                    infoDatagrama[element]["bin"] = decToBin(infoDatagrama[element]['bits'], ipDestino.val(), true)
+                    infoDatagrama[element]["tamanoBin"] = infoDatagrama[element]["bin"].length
+                    datagrama += infoDatagrama[element]['bin']
+                } else {
+                    infoDatagrama[element]["bin"] = decToBin(infoDatagrama[element]['bits'], infoDatagrama[element]['dec'])
+                    infoDatagrama[element]["tamanoBin"] = infoDatagrama[element]["bin"].length
+                    datagrama += infoDatagrama[element]['bin']
+                }
             }
             for (let i = 0; i < datagrama.length; i += 32) {
                 for (let j = i; j < (i + 32); j++) {
@@ -332,7 +342,7 @@
                 resultado = sumarHexa(resultado, data[i])
             }
         }
-        resultado = restarHexa('FFFF',resultado)
+        resultado = restarHexa('FFFF', resultado)
         resultado = decToHex(resultado)
         return resultado
     }
@@ -400,40 +410,39 @@
         return resultado
     }
 
-    function restarHexa(hex1, hex2){
+    function restarHexa(hex1, hex2) {
         let resultado = 0
         let acarreo = 0
         let resta1, resta2, resta3, resta4
 
-        if(hexToDec(hex1.charAt(0)) < hexToDec(hex2.charAt(0)))
-        {
-            resta1 = (hexToDec(hex1.charAt(0))+16)-hexToDec(hex2.charAt(0))
+        if (hexToDec(hex1.charAt(0)) < hexToDec(hex2.charAt(0))) {
+            resta1 = (hexToDec(hex1.charAt(0)) + 16) - hexToDec(hex2.charAt(0))
             acarreo = 1
         } else {
-            resta1 = hexToDec(hex1.charAt(0))-hexToDec(hex2.charAt(0))
+            resta1 = hexToDec(hex1.charAt(0)) - hexToDec(hex2.charAt(0))
         }
 
-        if((hexToDec(hex1.charAt(1))-acarreo) < hexToDec(hex2.charAt(1))){
-            resta2 = (hexToDec(hex1.charAt(1))+16)-hexToDec(hex2.charAt(1))
+        if ((hexToDec(hex1.charAt(1)) - acarreo) < hexToDec(hex2.charAt(1))) {
+            resta2 = (hexToDec(hex1.charAt(1)) + 16) - hexToDec(hex2.charAt(1))
         } else {
-            resta2 = hexToDec(hex1.charAt(1))-hexToDec(hex2.charAt(1))
+            resta2 = hexToDec(hex1.charAt(1)) - hexToDec(hex2.charAt(1))
             acarreo = 0
         }
 
-        if((hexToDec(hex1.charAt(2))-acarreo) < hexToDec(hex2.charAt(2))){
-            resta3 = (hexToDec(hex1.charAt(2))+16)-hexToDec(hex2.charAt(2))
+        if ((hexToDec(hex1.charAt(2)) - acarreo) < hexToDec(hex2.charAt(2))) {
+            resta3 = (hexToDec(hex1.charAt(2)) + 16) - hexToDec(hex2.charAt(2))
         } else {
-            resta3 = hexToDec(hex1.charAt(2))-hexToDec(hex2.charAt(2))
+            resta3 = hexToDec(hex1.charAt(2)) - hexToDec(hex2.charAt(2))
             acarreo = 0
         }
 
-        if((hexToDec(hex1.charAt(3))-acarreo) < hexToDec(hex2.charAt(3))){
-            resta4 = (hexToDec(hex1.charAt(3))+16)-hexToDec(hex2.charAt(3))
+        if ((hexToDec(hex1.charAt(3)) - acarreo) < hexToDec(hex2.charAt(3))) {
+            resta4 = (hexToDec(hex1.charAt(3)) + 16) - hexToDec(hex2.charAt(3))
         } else {
-            resta4 = hexToDec(hex1.charAt(3))-hexToDec(hex2.charAt(3))
+            resta4 = hexToDec(hex1.charAt(3)) - hexToDec(hex2.charAt(3))
             acarreo = 0
         }
-        resultado = decToHex(resta1)+""+decToHex(resta2)+""+decToHex(resta3)+""+decToHex(resta4)
+        resultado = decToHex(resta1) + "" + decToHex(resta2) + "" + decToHex(resta3) + "" + decToHex(resta4)
         return resultado
     }
 
@@ -469,12 +478,28 @@
      * @param num 
      * @returns 
      */
-    function decToBin(bits, dec) {
-        let bin = dec.toString(2)
-        let auxBin = bin
-        for (let i = 0; i < (bits - bin.length); i++) {
-            auxBin = "0" + auxBin
+    function decToBin(bits, dec, flagIp) {
+
+        let auxBin = ""
+        if (flagIp) {
+            let octetos = dec.split(".")
+            octetos.forEach(octeto => {
+                let binOct = Number(octeto).toString(2)
+                let auxBin2 = "" 
+                auxBin2 += binOct
+                for (let i = 0; i < (8 - binOct.length); i++) {
+                    auxBin2 = "0" + auxBin2
+                }
+                auxBin += auxBin2 
+            });
+        } else {
+            let bin = dec.toString(2)
+            auxBin = bin
+            for (let i = 0; i < (bits - bin.length); i++) {
+                auxBin = "0" + auxBin
+            }
         }
+
         return auxBin
     }
 
